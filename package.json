@@ -1,0 +1,32 @@
+{
+  "name": "docgen-cli",
+  "version": "0.1.0",
+  "description": "Answer a few questions about your project and get a plain-language USER_GUIDE.md instantly.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "docgen": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "docgen": "tsx src/index.ts",
+    "test": "tsx src/builder.test.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cli",
+    "documentation",
+    "user-guide",
+    "developer-tools"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@inquirer/prompts": "^7.5.2",
+    "chalk": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

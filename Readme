@@ -1,0 +1,74 @@
+# docgen-cli
+
+Answer a few questions about your project and get a plain-language `USER_GUIDE.md` instantly.
+
+Powered by [Groq](https://groq.com) — free, no credit card required.
+
+---
+
+## What it does
+
+`docgen` walks you through a short CLI interview about your app — what it does, who uses it, what sections it has — and generates a clean, readable user guide written in natural language.
+
+No templates. No copy-pasting. Just answer the questions and get a guide your client can actually read.
+
+## Requirements
+
+- Node.js 18+
+- A free Groq API key — get one at [console.groq.com](https://console.groq.com/keys)
+
+## Getting started
+
+```bash
+git clone https://github.com/your-username/docgen-cli.git
+cd docgen-cli
+npm install
+npm run docgen
+```
+
+The first time you run it, docgen will ask for your Groq API key and save it to `~/.docgen/config.json`. You won't be asked again.
+
+## Usage
+
+```bash
+# Generate USER_GUIDE.md in the current directory
+npm run docgen
+
+# Generate a file with a custom name
+npm run docgen -- my-guide.md
+```
+
+## Supported languages
+
+When asked for the guide language, type the language name in English:
+
+```
+Spanish, English, French, Portuguese, Chinese, Japanese, German, Italian...
+```
+
+The guide will be written in that language. The CLI questions are available in Spanish and English — other languages fall back to English.
+
+## Project structure
+
+```
+src/
+├── index.ts           # Entry point, orchestrates the flow
+├── cli/
+│   ├── prompts.ts     # All terminal input functions
+│   └── setup.ts       # First-run API key setup
+├── core/
+│   ├── builder.ts     # Data types and markdown fallback
+│   └── generator.ts   # Groq API call and prompt
+└── config/
+    └── config.ts      # Read/write ~/.docgen/config.json
+```
+
+## Running tests
+
+```bash
+npm test
+```
+
+## License
+
+MIT
