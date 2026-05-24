@@ -1,6 +1,6 @@
 {
-  "name": "docgen-cli",
-  "version": "0.1.0",
+  "name": "docwizard",
+  "version": "1.0.0",
   "description": "Answer a few questions about your project and get a plain-language USER_GUIDE.md instantly.",
   "type": "module",
   "main": "dist/index.js",
