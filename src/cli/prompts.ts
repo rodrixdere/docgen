@@ -15,6 +15,8 @@ const SUPPORTED_LANGUAGES: Record<string, Lang> = {
   english: "en",
   español: "es",
   spanish: "es",
+  es:      "es",
+  en:      "en",
 };
 
 const t: Record<Lang, Record<string, string>> = {
@@ -151,7 +153,7 @@ export function parseRoles(audience: string): string[] {
 export async function askLanguage(): Promise<{ lang: Lang; label: string }> {
   const answer = (await input({
     message: "Guide language:",
-    default: "Spanish",
+    default: "Spanish/English",
   })).trim().toLowerCase() || "spanish";
 
   const lang: Lang = SUPPORTED_LANGUAGES[answer] ?? "en";
