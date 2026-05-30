@@ -34,7 +34,7 @@ export async function ensureApiKey(): Promise<string> {
   writeConfig({ groqApiKey: key });
 
   console.log();
-  console.log(chalk.green("  ✓ Key saved to ~/.docgen/config.json"));
+  console.log(chalk.green("  Key saved to ~/.docgen/config.json"));
   console.log(chalk.dim("  You won't be asked again."));
   console.log();
 
