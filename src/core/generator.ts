@@ -12,76 +12,75 @@ const MODEL = "llama-3.3-70b-versatile";
 // ---------------------------------------------------------------------------
 
 function buildPrompt(info: ProjectInfo, language: string): string {
-  const sections = info.sections
-    .map((s) => {
-      const lines = [`- Name: ${s.name}`, `  Description: ${s.description}`];
-      if (s.purpose) lines.push(`  Purpose (why this matters to the user): ${s.purpose}`);
-      if (s.context) lines.push(`  Important context: ${s.context}`);
-      if (s.role) lines.push(`  Role: ${s.role}`);
-      if (s.steps && s.steps.length > 0) {
-        lines.push(`  Steps: ${s.steps.join(" / ")}`);
+  function serializeSection(s: typeof info.sections[0], indent = ""): string {
+    const lines = [`${indent}- Name: ${s.name}`, `${indent}  Description: ${s.description}`];
+    if (s.purpose)  lines.push(`${indent}  Purpose: ${s.purpose}`);
+    if (s.context)  lines.push(`${indent}  Context: ${s.context}`);
+    if (s.role)     lines.push(`${indent}  Role: ${s.role}`);
+    if (s.steps?.length) lines.push(`${indent}  Steps: ${s.steps.join(" / ")}`);
+    if (s.commonMistake) lines.push(`${indent}  Common mistake: ${s.commonMistake}`);
+    if (s.subsections?.length) {
+      lines.push(`${indent}  Subsections:`);
+      for (const sub of s.subsections) {
+        lines.push(serializeSection(sub, indent + "    "));
       }
-      if (s.commonMistake) lines.push(`  Common mistake: ${s.commonMistake}`);
-      return lines.join("\n");
-    })
-    .join("\n\n");
+    }
+    return lines.join("\n");
+  }
 
-  const roleInfo =
-    info.roles && info.roles.length > 1
-      ? `The app has multiple user roles: ${info.roles.join(", ")}.`
-      : "";
+  const sections = info.sections.map(s => serializeSection(s)).join("\n\n");
 
-  const loginInfo = info.hasLogin
-    ? "The app requires users to log in. Include a login section with numbered steps."
+  const roleInfo = info.roles?.length
+    ? `The app has multiple user roles: ${info.roles.join(", ")}.`
     : "";
 
-  const logoutInfo = info.hasLogout
-    ? "The app has a logout option. Include a logout section with numbered steps."
-    : "";
+  const loginInfo  = info.hasLogin  ? "The app requires users to log in."  : "";
+  const logoutInfo = info.hasLogout ? "The app has a logout option." : "";
 
-  const orderedStepsInfo =
-    info.orderedSteps && info.orderedSteps.length > 0
-      ? `Before using the app, users must complete these steps in order: ${info.orderedSteps.join(", ")}.`
-      : "";
+  const orderedStepsInfo = info.orderedSteps?.length
+    ? `Before using the app, users must complete these steps in order: ${info.orderedSteps.join(", ")}.`
+    : "";
 
   const supportInfo = info.supportContact
     ? `Support contact: ${info.supportContact}`
     : "No specific support contact. Tell users to contact whoever gave them access.";
 
+  const roleGroupingInstruction = info.roles?.length && info.roles.length > 1
+    ? `Group sections by role using headers like "## [Role name] features" or the equivalent in ${language}. Sections with no role go under a "## General features" header or equivalent.`
+    : "";
+
   return `
 You are writing a user guide for a software application. Your audience is: ${info.audience}.
-Write in plain, friendly language. Do not use technical jargon. Be concise and direct.
-Write the entire guide in ${language}. This is mandatory regardless of the language of the input.
+Write in plain, friendly language. No technical jargon. Be thorough and clear.
+Write the ENTIRE guide in ${language}. This is mandatory — do not mix languages.
 
 Project: ${info.name}
-What it does: ${info.summary}${info.benefit ? `\nWhy it is useful: ${info.benefit}` : ''}
+What it does: ${info.summary}${info.benefit ? `\nWhy it is useful: ${info.benefit}` : ""}
 How users access it: ${info.entryPoint}
 ${roleInfo}
 ${loginInfo}
 ${logoutInfo}
 ${orderedStepsInfo}
 
-Sections of the app:
+Sections:
 ${sections}
 
 ${supportInfo}
 
 Instructions:
-- Write a complete user guide in Markdown.
-- Use ## for main sections and ### for subsections.
-- ${info.roles && info.roles.length > 1 ? `Group sections under "## Funciones para [role]" headers for each role. Sections available to everyone go under "## Funciones generales".` : ""}
-- Write a thorough, complete user guide. Each section should be well developed — not a single line.
-- Start with an introduction paragraph (2-3 sentences) that explains what the app is, who it is for, and why it is useful. Use the summary, audience, and benefit fields.
-- For each section, write a full paragraph (3-5 sentences) that explains what the user can do, why it matters, and how it fits into their workflow. Use the description, purpose, and context fields to build this out. Do not just repeat the input verbatim.
-- If a section has steps, use a numbered list. Write each step as a clear, actionable instruction with enough detail that a non-technical user can follow it without guessing.
-- If a section has important context, weave it naturally into the section text or add it as a callout.
-- For common mistakes, use a blockquote starting with > **Nota:**. Explain why it matters, not just what to avoid.
-- Do not invent features, screens, or behavior that were not described.
-- Closing phrases in the support section are allowed if they feel natural and helpful.
-- Do not add a "Technologies used" section.
-- Do not add an "Author" section.
-- End with a support section. If a contact was provided, use it as a mailto link.
-- Output only the Markdown. No preamble, no explanation.
+- Write a complete, well-developed user guide in Markdown.
+- Use ## for main sections, ### for subsections, #### for sub-subsections.
+- ${roleGroupingInstruction}
+- Start with a 2-3 sentence introduction: what the app is, who it is for, why it is useful.
+- For each section write 3-5 sentences explaining what the user can do and why it matters. Do not just repeat the input — expand it naturally.
+- For sections with steps, use a numbered list. Each step must be clear and actionable for a non-technical user.
+- For common mistakes, use a blockquote: > **Note:** or the equivalent in ${language}.
+- If login is detected, include a login section with numbered steps.
+- If logout is detected, include a logout section with numbered steps.
+- Do not invent features or behavior not described in the input.
+- Do not add a "Technologies used" or "Author" section.
+- End with a support section. Use a mailto link if an email was provided.
+- Output only the Markdown. No preamble, no explanation outside the guide.
 `.trim();
 }
 
@@ -89,9 +88,11 @@ Instructions:
 // API call
 // ---------------------------------------------------------------------------
 
-export async function generateGuide(info: ProjectInfo, apiKey: string, language: string = "Spanish"): Promise<string> {
-  const prompt = buildPrompt(info, language);
-
+export async function generateGuide(
+  info: ProjectInfo,
+  apiKey: string,
+  language = "Spanish",
+): Promise<string> {
   const response = await fetch(GROQ_API_URL, {
     method: "POST",
     headers: {
@@ -100,7 +101,7 @@ export async function generateGuide(info: ProjectInfo, apiKey: string, language:
     },
     body: JSON.stringify({
       model: MODEL,
-      messages: [{ role: "user", content: prompt }],
+      messages: [{ role: "user", content: buildPrompt(info, language) }],
       temperature: 0.3,
       max_tokens: 2048,
     }),
@@ -108,19 +109,12 @@ export async function generateGuide(info: ProjectInfo, apiKey: string, language:
 
   if (!response.ok) {
     const error = await response.text();
-    if (response.status === 401) {
-      throw new Error("Invalid Groq API key. Run docgen again to enter a new one.");
-    }
-    if (response.status === 429) {
-      throw new Error("Groq rate limit reached. Wait a moment and try again.");
-    }
+    if (response.status === 401) throw new Error("Invalid Groq API key. Run docgen again to enter a new one.");
+    if (response.status === 429) throw new Error("Groq rate limit reached. Wait a moment and try again.");
     throw new Error(`Groq API error (${response.status}): ${error}`);
   }
 
-  const data = await response.json() as {
-    choices: { message: { content: string } }[];
-  };
-
+  const data = await response.json() as { choices: { message: { content: string } }[] };
   const content = data.choices?.[0]?.message?.content;
   if (!content) throw new Error("Groq returned an empty response.");
 
