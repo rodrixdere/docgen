@@ -148,12 +148,16 @@ export function detectRolesFromCode(files: string[]): string[] {
     /\brol\s*=\s*['"`](\w+)['"`]/g,
     /requiredRole\s*[:=]\s*['"`](\w+)['"`]/g,
     /allowedRoles\s*[:=]\s*\[([^\]]+)\]/g,
-    /roles\s*[:=]\s*\[([^\]]+)\]/g,
+    /roles\s*[:=]\s*\[\s*['"`](\w+)['"`]/g,
   ];
   const skip = new Set(["string", "undefined", "null", "number", "boolean", "object", "any"]);
 
   for (const file of files.slice(0, 60)) {
-    const content = readText(file);
+    const raw = readText(file);
+    // Strip comments so role strings inside comments don't get detected
+    const content = raw
+      .replace(/\/\/.*$/gm, "")
+      .replace(/\/\*[\s\S]*?\*\//g, "");
     for (const pattern of patterns) {
       pattern.lastIndex = 0;
       let match;

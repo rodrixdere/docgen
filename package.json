@@ -8,7 +8,7 @@
     "docwizard": "dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "dev": "tsx src/index.ts",
     "test": "tsx src/builder.test.ts",
     "prepublishOnly": "npm run build",

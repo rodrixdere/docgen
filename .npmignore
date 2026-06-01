@@ -1,0 +1,24 @@
+# Source
+src/
+
+# TypeScript config
+tsconfig.json
+
+# Tests
+**/*.test.ts
+**/*.test.js
+**/*.spec.ts
+**/*.spec.js
+
+# Dev tools
+.eslintrc*
+.prettierrc*
+.editorconfig
+
+# Git
+.gitignore
+.gitattributes
+
+# Misc
+*.log
+.DS_Store
