@@ -1,23 +1,29 @@
 {
   "name": "docwizard",
-  "version": "1.1.0",
-  "description": "Answer a few questions about your project and get a plain-language USER_GUIDE.md instantly.",
+  "version": "2.0.0",
+  "description": "Scan your project and get a plain-language user guide instantly. Powered by Groq.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "docgen": "dist/index.js"
+    "docwizard": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
-    "docgen": "tsx src/index.ts",
+    "dev": "tsx src/index.ts",
     "test": "tsx src/builder.test.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "release": "npm run build && npm publish && npm install -g docwizard"
   },
   "keywords": [
     "cli",
     "documentation",
     "user-guide",
-    "developer-tools"
+    "developer-tools",
+    "docgen",
+    "ai",
+    "groq",
+    "markdown",
+    "scanner"
   ],
   "license": "MIT",
   "dependencies": {
