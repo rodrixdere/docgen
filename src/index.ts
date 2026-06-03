@@ -2,6 +2,7 @@
 // docwizard/src/index.ts
 
 import chalk from "chalk";
+import logSymbols from "log-symbols";
 import { execSync } from "child_process";
 import { existsSync, writeFileSync } from "fs";
 import { resolve } from "path";
@@ -77,9 +78,9 @@ function runUpdate() {
   try {
     execSync("npm install -g docwizard@latest", { stdio: "inherit" });
     console.log();
-    console.log(chalk.green("  ✓ docwizard updated successfully."));
+    console.log(logSymbols.success, "docwizard updated successfully.");
   } catch {
-    console.error(chalk.red("  ✖ Update failed. Try running manually:"));
+    console.error(logSymbols.error, "Update failed. Try running manually:");
     console.error(chalk.dim("    npm install -g docwizard@latest"));
   }
   console.log();
@@ -114,9 +115,9 @@ async function main() {
   // -- Scan --
   const root = resolve(scanPath);
   console.log();
-  console.log(chalk.dim(`  Scanning ${root}...`));
+  console.log(logSymbols.info, chalk.dim(`Scanning ${root}...`));
   const scanned = scanProject(root);
-  console.log(chalk.green("  ✓ Scan complete."));
+  console.log(logSymbols.success, "Scan complete.");
 
   if (scanned.name)           console.log(chalk.dim(`  Name: ${scanned.name}`));
   if (scanned.roles?.length)  console.log(chalk.dim(`  Roles: ${scanned.roles.join(", ")}`));
@@ -177,7 +178,7 @@ async function main() {
     guide = await generateGuide(info, apiKey, langLabel);
   } catch (err: any) {
     console.log();
-    console.error(chalk.red(`\n  ✖ ${err.message}`));
+    console.error(logSymbols.error, err.message);
     if (err.message.includes("Invalid Groq API key")) {
       const { writeConfig } = await import("./config/config.js");
       writeConfig({ groqApiKey: "" });
@@ -190,11 +191,11 @@ async function main() {
   process.stdout.write(chalk.green(tr("done") + "\n"));
   writeFileSync(fullPath, guide, "utf-8");
   console.log();
-  console.log(chalk.green(tr("written", { file: outputPath })));
+  console.log(logSymbols.success, tr("written", { file: outputPath }));
   console.log();
 }
 
 main().catch(err => {
-  console.error("Error:", err.message);
+  console.error(logSymbols.error, err.message);
   process.exit(1);
 });

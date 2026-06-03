@@ -2,16 +2,16 @@
 
 Scan your project and get a plain-language `USER_GUIDE.md` in seconds.
 
-docwizard reads your source code — folder structure, roles, sections, auth — and generates a clean user guide your clients can actually read. No templates, no copy-pasting.
+docwizard reads your source code - folder structure, roles, sections, auth - and generates a clean user guide your clients can actually read. No templates, no copy-pasting.
 
-Powered by [Groq](https://groq.com) — free, no credit card required.
+Powered by [Groq](https://groq.com) - free, no credit card required.
 
 ---
 
 ## Requirements
 
 - Node.js 18+
-- A free Groq API key — get one at [console.groq.com](https://console.groq.com/keys)
+- A free Groq API key - get one at [console.groq.com](https://console.groq.com/keys)
 
 ## Installation
 
@@ -45,11 +45,11 @@ The first time you run it, docwizard will ask for your Groq API key and save it 
 
 ## What it detects automatically
 
-- **Framework** — React, Next.js, Vue, Nuxt, Svelte, Angular, Express
-- **Sections and subsections** — from your pages, views, screens, scenes, or routes folders
-- **User roles** — from role checks in your code (`role === "admin"`, `rol === "profesor"`, etc.)
-- **Auth** — login and logout from file names, folder names, and code patterns
-- **Project name and summary** — from `package.json` and `README.md`
+- **Framework** - React, Next.js, Vue, Nuxt, Svelte, Angular, Express
+- **Sections and subsections** - from your pages, views, screens, scenes, or routes folders
+- **User roles** - from role checks in your code (`role === "admin"`, `rol === "profesor"`, etc.)
+- **Auth** - login and logout from file names, folder names, and code patterns
+- **Project name and summary** - from `package.json` and `README.md`
 
 Questions are only asked for what the scanner cannot infer.
 
@@ -85,7 +85,7 @@ Type the language name when prompted:
 Spanish, English, French, Portuguese, Chinese, Japanese, German, Italian...
 ```
 
-The guide will be written entirely in that language. The CLI prompts are available in Spanish and English — other languages fall back to English.
+The guide will be written entirely in that language. The CLI prompts are available in Spanish and English - other languages fall back to English.
 
 ## Supported frameworks
 
@@ -102,7 +102,7 @@ The guide will be written entirely in that language. The CLI prompts are availab
 
 ```
 src/
-├── index.ts              # Entry point — arg parsing, orchestration
+├── index.ts              # Entry point - arg parsing, orchestration
 ├── cli/
 │   ├── prompts.ts        # Terminal input functions
 │   └── setup.ts          # First-run API key setup
@@ -120,17 +120,27 @@ src/
 ## Running locally
 
 ```bash
-git clone https://github.com/your-username/docwizard.git
+git clone https://github.com/rodrixdere/docgen.git
 cd docwizard
 npm install
 npm run dev -- --scan /path/to/project
 ```
 
-## Running tests
+## Roadmap
 
-```bash
-npm test
-```
+| Version | Feature |
+|---------|---------|
+| **v2.1.0** | `--help` command |
+| **v2.2.0** | `--reset-key` to change your Groq API key, `--lang` flag to skip the language prompt |
+| **v2.3.0** | Scanner improvements - more role patterns, more frameworks |
+| **v3.0.0** | README generator |
+| **v4.0.0** | Document generator |
+| **v5.0.0** | Multiple AI providers - Claude, OpenAI, DeepSeek, and more |
+| **v6.0.0** | Multi-format output - `.pdf`, `.docx`, `.txt` |
+| **v7.0.0** | Support for more languages - Python, PHP, Ruby, Java/Kotlin, C#, Go |
+| **v8.0.0** | TBD - based on user feedback |
+
+
 
 ## License
 
