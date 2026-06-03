@@ -1,6 +1,6 @@
 {
   "name": "docwizard",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Scan your project and get a plain-language user guide instantly. Powered by Groq.",
   "type": "module",
   "main": "dist/index.js",
