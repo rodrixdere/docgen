@@ -1,4 +1,4 @@
-// docgen/src/config/config.ts
+// docwizard/src/config/config.ts
 // Reads and writes ~/.docgen/config.json
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
@@ -10,6 +10,7 @@ const CONFIG_PATH = join(CONFIG_DIR, "config.json");
 
 export interface DocgenConfig {
   groqApiKey: string;
+  defaultLang?: string; // e.g. "spanish", "english", "chinese"
 }
 
 export function readConfig(): DocgenConfig | null {
@@ -26,16 +27,24 @@ export function readConfig(): DocgenConfig | null {
   }
 }
 
-export function writeConfig(config: DocgenConfig): void {
+export function writeConfig(config: Partial<DocgenConfig>): void {
   if (!existsSync(CONFIG_DIR)) {
     mkdirSync(CONFIG_DIR, { recursive: true });
   }
-  writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), "utf-8");
+  // Merge with existing config so we don't overwrite unrelated fields
+  const existing = readConfig() ?? { groqApiKey: "" };
+  const merged = { ...existing, ...config };
+  writeFileSync(CONFIG_PATH, JSON.stringify(merged, null, 2), "utf-8");
 }
 
 export function resolveApiKey(): string | null {
-  // Env var takes priority over saved config
   if (process.env.GROQ_API_KEY) return process.env.GROQ_API_KEY;
   const config = readConfig();
   return config?.groqApiKey ?? null;
+}
+
+// Returns the saved default language, or null if none is set.
+export function resolveDefaultLang(): string | null {
+  const config = readConfig();
+  return config?.defaultLang ?? null;
 }
