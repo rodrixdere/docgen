@@ -130,8 +130,6 @@ npm run dev -- --scan /path/to/project
 
 | Version | Feature |
 |---------|---------|
-| **v2.1.0** | `--help` command |
-| **v2.2.0** | `--reset-key` to change your Groq API key, `--lang` flag to skip the language prompt |
 | **v2.3.0** | Scanner improvements - more role patterns, more frameworks |
 | **v3.0.0** | README generator |
 | **v4.0.0** | Document generator |
